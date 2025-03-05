@@ -1,0 +1,22 @@
+1. Purpose of EC2PrimeDeployRole and Why It Needs S3 Permissions
+
+The EC2PrimeDeployRole is an IAM role. It is assigned to the EC2 instance in order to allow interaction with AWS
+services securely. AWS COdeDeploy often stores application artifacts in an S3 bucket, and the EC2 instance needs 
+to download these artifacts during deployment. The S3 permissions allow the instance to list and fetch artifacts
+from the specified S3 bucket, and download deployment scripts and application files stored in S3
+
+2. How does appspec.yml ensure the application runs after deployment?
+
+The appspec.yml file is basically the blueprint for AWS CodeDeploy. Additionally, it defines where to copy files,
+how to set permissions, and what lifecyle hooks to execute before and after deployment. It ensures the app runs by
+copying files to the correct destination, and using lifecycle hooks to define commands to execute at different stages. 
+
+3. If the EC2 instance were in a private subnet, what changes would be needed for CodeDeploy to work?
+
+IF the EC2 instance is in a private subnet, it cannot access AWS CodeDeploy, S3, or other public AWS services. This is 
+because private subnets do not have internet access by default. The first change would have to be enabling internet
+access. You could attach a Nat Gateway to a public subnet and update the route table of the private subnet to route
+external traffic through the NAT. You could also use AWS VPC Endpoint for CodeDeploy and S3 to enable direct communication.
+Secondly, you have have to modify the security groups and IAM polocies. You would have to make sure the EC2 instance allows
+outbound traffic to CodeDeploy and S3. Additionally, you would have to update IAM polocies in order for the EC2 instance to
+have access to AWS services via the NAT Gateway or VPC Endpoint. 
